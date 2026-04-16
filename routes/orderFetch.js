@@ -6,11 +6,14 @@ const { sql, poolPromise } = require("../config/dbconfig");
 // =====================================
 // 📌 GET TODAY ORDERS
 // =====================================
-router.get("/today", async (req, res) => {
+router.get("/today/:si_id", async (req, res) => {
   try {
     const pool = await poolPromise;
+    const { si_id } = req.params;  // ✅ GET SHOP ID
 
-    const result = await pool.request().query(`
+    const result = await pool.request()
+      .input("si_id", sql.VarChar, si_id)
+      .query(`
 SELECT  
   o.or_id,
   o.size,
@@ -30,10 +33,11 @@ SELECT
 FROM orders o
 JOIN user1 u ON o.u_id = u.u_id
 JOIN address a ON o.ad_id = a.ad_id
-WHERE o.ordertime >= CAST(GETDATE() AS DATE)
+WHERE o.si_id = @si_id   -- ✅ IMPORTANT FILTER
+AND o.ordertime >= CAST(GETDATE() AS DATE)
 AND o.ordertime < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))
 ORDER BY o.ordertime DESC
-    `);
+      `);
 
     const orders = result.recordset.map(order => ({
       ...order,
@@ -61,7 +65,8 @@ ORDER BY o.ordertime DESC
 // =====================================
 // 📌 GET ALL ORDERS
 // =====================================
-router.get("/all", async (req, res) => {
+// 🔥 ADMIN - ALL SHOPS
+router.get("/today-all", async (req, res) => {
   try {
     const pool = await poolPromise;
 
@@ -85,6 +90,7 @@ router.get("/all", async (req, res) => {
       FROM orders o
       JOIN user1 u ON o.u_id = u.u_id
       JOIN address a ON o.ad_id = a.ad_id
+      WHERE CAST(o.ordertime AS DATE) = CAST(GETDATE() AS DATE)
       ORDER BY o.ordertime DESC
     `);
 
@@ -95,18 +101,10 @@ router.get("/all", async (req, res) => {
         : null
     }));
 
-    res.json({
-      success: true,
-      count: orders.length,
-      orders
-    });
+    res.json({ success: true, orders });
 
   } catch (err) {
-    console.error("ALL ORDER ERROR:", err);
-    res.status(500).json({
-      success: false,
-      message: err.message
-    });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 

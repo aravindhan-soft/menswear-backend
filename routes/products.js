@@ -5,7 +5,7 @@ const { sql, poolPromise } = require("../config/dbconfig");
 router.get("/getproducts", async (req, res) => {
   try {
     const pool = await poolPromise;
-    const { category } = req.query;
+    const { category, shopId } = req.query;
 
     let query = `
       SELECT
@@ -25,19 +25,24 @@ router.get("/getproducts", async (req, res) => {
       LEFT JOIN variety v ON pv.v_id = v.v_id
       LEFT JOIN color co ON pv.co_id = co.co_id
       JOIN product_sku sku ON pv.pv_id = sku.pv_id
+      WHERE 1=1
     `;
-
-    if (category) {
-      query += ` WHERE c.category = @category`;
-    }
-
-    query += ` ORDER BY pv.pv_id DESC`;
 
     const request = pool.request();
 
+    // 🔹 filter by shop
+    if (shopId) {
+      query += ` AND p.si_id = @shopId`;
+      request.input("shopId", sql.VarChar, shopId);
+    }
+
+    // 🔹 filter by category
     if (category) {
+      query += ` AND c.category = @category`;
       request.input("category", sql.VarChar, category);
     }
+
+    query += ` ORDER BY pv.pv_id DESC`;
 
     const result = await request.query(query);
 
@@ -51,7 +56,7 @@ router.get("/getproducts", async (req, res) => {
           category: row.category,
           variety: row.variety,
           color: row.color,
-          bio: row.bio, // now guaranteed to exist
+          bio: row.bio,
           image: row.image
             ? "data:image/jpeg;base64," +
               Buffer.from(row.image).toString("base64")
@@ -74,6 +79,5 @@ router.get("/getproducts", async (req, res) => {
     res.status(500).json({ success: false });
   }
 });
-
 
 module.exports = router;
