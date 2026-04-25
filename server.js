@@ -26,7 +26,7 @@ const app = express();
 
 
 app.use(cors({
-  origin: "https://app.netlify.com/projects/menswear-coderead2026/"
+  origin: "https://menswear-coderead2026.netlify.app"
 }));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
