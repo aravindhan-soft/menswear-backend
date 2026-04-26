@@ -62,7 +62,8 @@ app.listen(PORT, () => {
 });
 
 console.log("KEY:", process.env.RAZORPAY_KEY_ID);*/
-
+const express = require('express');
+const app = express(); 
 app.get("/", (req, res) => {
   res.send("Server working ✅");
 });
