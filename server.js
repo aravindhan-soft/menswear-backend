@@ -1,5 +1,5 @@
 
-require("dotenv").config();
+/*require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -61,5 +61,9 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
 
-console.log("KEY:", process.env.RAZORPAY_KEY_ID);
+console.log("KEY:", process.env.RAZORPAY_KEY_ID);*/
+
+app.get("/", (req, res) => {
+  res.send("Server working ✅");
+});
 
