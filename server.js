@@ -3,7 +3,6 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const { connectDB } = require("./config/dbconfig");
 const path = require("path");
 
 // Routes
@@ -24,7 +23,7 @@ const getShopsRoute = require("./routes/getShops");
 
 const app = express();
 
-// ✅ TEMPORARY: Allow all origins (for testing)
+// ✅ Allow all origins (for now)
 app.use(cors());
 
 // Middleware
@@ -32,12 +31,12 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.json());
 
-// ✅ ROOT TEST ROUTE
+// ✅ Test route
 app.get("/", (req, res) => {
   res.send("Server is working ✅");
 });
 
-// Register Routes
+// Routes
 app.use("/api", signup);
 app.use("/api", login);
 app.use("/api", forgetpassword);
@@ -53,9 +52,6 @@ app.use("/dashboard", dashboardRoutes);
 app.use("/api", shopRegisterRoute);
 app.use("/upload", express.static(path.join(__dirname, "upload")));
 app.use("/api", getShopsRoute);
-
-// ✅ CONNECT DB BEFORE SERVER START
-connectDB();
 
 // Start server
 const PORT = parseInt(process.env.PORT, 10) || 5000;
