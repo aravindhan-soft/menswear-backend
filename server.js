@@ -1,8 +1,8 @@
-
-/*require("dotenv").config();
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const { connectDB } = require("./config/dbconfig");
 const path = require("path");
 
 // Routes
@@ -23,20 +23,17 @@ const getShopsRoute = require("./routes/getShops");
 
 const app = express();
 
-// ✅ Allow all origins (for now)
-app.use(cors());
 
-// Middleware
+
+app.use(cors({
+  origin: "https://menswear-coderead2026.netlify.app"
+}));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.json());
 
-// ✅ Test route
-app.get("/", (req, res) => {
-  res.send("Server is working ✅");
-});
 
-// Routes
+// Register Routes
 app.use("/api", signup);
 app.use("/api", login);
 app.use("/api", forgetpassword);
@@ -46,25 +43,17 @@ app.use("/", availablestockRoute);
 app.use("/api", productRoutes);
 app.use("/api", saveRoute);
 app.use("/api/order", orderRoutes);
-app.use("/api/order", orderFetchRoute);
+app.use("/api/order", orderFetchRoute);  
 app.use("/api/payment", payment);
 app.use("/dashboard", dashboardRoutes);
 app.use("/api", shopRegisterRoute);
 app.use("/upload", express.static(path.join(__dirname, "upload")));
 app.use("/api", getShopsRoute);
 
-// Start server
+// Start server 
 const PORT = parseInt(process.env.PORT, 10) || 5000;
 console.log("FINAL PORT =", PORT);
-
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
-
-console.log("KEY:", process.env.RAZORPAY_KEY_ID);*/
-const express = require('express');
-const app = express(); 
-app.get("/", (req, res) => {
-  res.send("Server working ✅");
-});
-
+console.log("KEY:", process.env.RAZORPAY_KEY_ID);
