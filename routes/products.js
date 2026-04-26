@@ -7,6 +7,10 @@ router.get("/getproducts", async (req, res) => {
     const pool = await poolPromise;
     const { category, shopId } = req.query;
 
+    if (!shopId) {
+      return res.status(400).json({ error: "shopId is required" });
+    }
+
     let query = `
       SELECT
         pv.pv_id,
@@ -30,13 +34,11 @@ router.get("/getproducts", async (req, res) => {
 
     const request = pool.request();
 
-    // 🔹 filter by shop
     if (shopId) {
       query += ` AND p.si_id = @shopId`;
       request.input("shopId", sql.VarChar, shopId);
     }
 
-    // 🔹 filter by category
     if (category) {
       query += ` AND c.category = @category`;
       request.input("category", sql.VarChar, category);
@@ -75,9 +77,8 @@ router.get("/getproducts", async (req, res) => {
     res.json({ success: true, data: Object.values(grouped) });
 
   } catch (error) {
-    console.error("ERROR:", error);
-    res.status(500).json({ success: false });
+    console.error("❌ FULL ERROR:", error); // 👈 VERY IMPORTANT
+    res.status(500).json({ success: false, message: error.message });
   }
 });
-
 module.exports = router;
