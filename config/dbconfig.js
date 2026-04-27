@@ -9,7 +9,13 @@ const config = {
   options: {
     encrypt: true,
     trustServerCertificate: true,
+    enableArithAbort: true, // Required for Azure SQL
   },
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 30000
+  }
 };
 
 const poolPromise = new sql.ConnectionPool(config)
