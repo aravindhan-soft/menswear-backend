@@ -8,7 +8,7 @@ const config = {
   database: process.env.DB_DATABASE,
   options: {
     encrypt: true,
-    trustServerCertificate: true,
+    trustServerCertificate: false,
     enableArithAbort: true, // Required for Azure SQL
   },
   pool: {
@@ -24,9 +24,10 @@ const poolPromise = new sql.ConnectionPool(config)
     console.log("✅ MSSQL Connected");
     return pool;
   })
-  .catch(err => {
-    console.log("❌ DB Connection Failed:", err);
-  });
+.catch(err => {
+  console.error("❌ DB Connection Failed:", err);
+  throw err; // 🔥 VERY IMPORTANT
+});
 
 module.exports = {
   sql,
