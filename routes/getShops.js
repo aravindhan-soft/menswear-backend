@@ -10,11 +10,22 @@ const { sql, poolPromise } = require("../config/dbconfig");
 router.get("/shops", async (req, res) => {
   try {
     const pool = await poolPromise;
-    const result = await pool.request().query("SELECT * FROM shops");
+
+const result = await pool.request().query(`
+  SELECT 
+    si_id,
+    shopname,
+    shopaddress,
+    shop_logo
+  FROM shop_register
+  ORDER BY si_id DESC
+`);
+
     res.json(result.recordset);
-  } catch (err) {
-    console.error("API ERROR:", err);
-    res.status(500).json({ error: err.message });
+
+  } catch (error) {
+    console.error("Get Shops Error:", error);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
