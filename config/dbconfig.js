@@ -6,11 +6,14 @@ const config = {
   password: process.env.DB_PASSWORD,
   server: process.env.DB_SERVER,
   database: process.env.DB_DATABASE,
+  port: parseInt(process.env.DB_PORT) || 1433, // ✅ IMPORTANT for Azure/Railway
+
   options: {
-    encrypt: true,
+    encrypt: true, // ✅ Required for Azure SQL
     trustServerCertificate: false,
-    enableArithAbort: true, // Required for Azure SQL
+    enableArithAbort: true,
   },
+
   pool: {
     max: 10,
     min: 0,
@@ -18,6 +21,7 @@ const config = {
   }
 };
 
+// ✅ Proper connection handling
 const poolPromise = new sql.ConnectionPool(config)
   .connect()
   .then(pool => {
@@ -25,11 +29,11 @@ const poolPromise = new sql.ConnectionPool(config)
     return pool;
   })
   .catch(err => {
-    console.log("❌ DB Connection Failed:", err);
+    console.error("❌ DB Connection Failed:", err);
+    throw err; // 🚨 VERY IMPORTANT (this was missing)
   });
 
 module.exports = {
   sql,
-  poolPromise,
-  config
+  poolPromise
 };

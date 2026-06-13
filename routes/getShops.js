@@ -11,21 +11,25 @@ router.get("/shops", async (req, res) => {
   try {
     const pool = await poolPromise;
 
-const result = await pool.request().query(`
-  SELECT 
-    si_id,
-    shopname,
-    shopaddress,
-    shop_logo
-  FROM shop_register
-  ORDER BY si_id DESC
-`);
+    if (!pool) {
+      return res.status(500).json({ error: "Database not connected" });
+    }
+
+    const result = await pool.request().query(`
+      SELECT 
+        si_id,
+        shopname,
+        shopaddress,
+        shop_logo
+      FROM shop_register
+      ORDER BY created_at DESC
+    `);
 
     res.json(result.recordset);
 
   } catch (error) {
-    console.error("Get Shops Error:", error);
-    res.status(500).json({ error: "Server error" });
+    console.error("🔥 Shops API Error:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 
