@@ -8,10 +8,9 @@ const config = {
   database: process.env.DB_DATABASE,
   port: parseInt(process.env.DB_PORT) || 1433, // ✅ IMPORTANT for Azure/Railway
 
-  options: {
-    encrypt: true, // ✅ Required for Azure SQL
-    trustServerCertificate: false,
-    enableArithAbort: true,
+   options: {
+    trustServerCertificate: true,
+    encrypt: true
   },
 
   pool: {
