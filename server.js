@@ -29,7 +29,8 @@ app.use(cors({
   origin: [
     "http://localhost:5174",
     "http://localhost:5173",
-    "https://menswear-coderead2026.netlify.app"
+    "https://menswear-coderead2026.netlify.app",
+     "https://menswear-frontend.vercel.app"
   ]
 }));
 
